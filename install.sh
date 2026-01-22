@@ -36,28 +36,11 @@ then
 fi
 EOF
 
-echo "Setup pnpm..."
-if command -v pnpm >/dev/null 2>&1; then
-    SHELL=zsh pnpm setup
-
-    export PNPM_HOME="$HOME/.local/share/pnpm"
-    case ":$PATH:" in
-      *":$PNPM_HOME:"*) ;;
-      *) export PATH="$PNPM_HOME:$PATH" ;;
-    esac
-
-    pnpm install -g @anthropic-ai/claude-code @charmland/crush
-fi
-
-if command -v vim >/dev/null 2>&1; then
-    echo "Installing vim configuration..."
-    curl https://raw.githubusercontent.com/e7h4n/e7h4n-vim/master/bootstrap.sh -L -o - | bash -i
-    echo "vim configuration installation completed"
-fi
-
 # Install zimfw (zsh framework)
 echo "Installing zimfw..."
 rm -rf ${ZDOTDIR:-${HOME}}/.zim
 git clone --recursive https://github.com/zimfw/zimfw.git ${ZDOTDIR:-${HOME}}/.zim
 
 zsh -c "source ${ZDOTDIR:-${HOME}}/.zim/zimfw.zsh init -q"
+
+curl -fsSL https://claude.ai/install.sh | bash

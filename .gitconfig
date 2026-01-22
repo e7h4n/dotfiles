@@ -28,11 +28,11 @@
 [push]
     default = simple
 [delta]
-	side-by-side = true
+    side-by-side = true
 [pull]
-	rebase = true
+    rebase = true
 [init]
-	defaultBranch = main
+    defaultBranch = main
 [user]
-	name = Ethan Zhang
-	email = ethan@vm0.ai
+    name = Ethan Zhang
+    email = ethan@vm0.ai

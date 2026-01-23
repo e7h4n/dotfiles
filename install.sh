@@ -13,4 +13,4 @@ ln -sf $dotfiles_dir/.gitattributes $HOME/.gitattributes
 ln -sf $dotfiles_dir/.agignore $HOME/.agignore
 
 
-curl -fsSL https://claude.ai/install.sh | bash
+bash $dotfiles_dir/install_claude.sh

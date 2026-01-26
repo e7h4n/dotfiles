@@ -12,7 +12,7 @@ if [[ -n "$TARGET" ]] && [[ ! "$TARGET" =~ ^(stable|latest|[0-9]+\.[0-9]+\.[0-9]
 fi
 
 GCS_BUCKET="https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases"
-DOWNLOAD_DIR="$HOME/.claude/downloads"
+DOWNLOAD_DIR="$HOME/.cache/claude"
 
 # Check for required dependencies
 DOWNLOADER=""
@@ -116,23 +116,46 @@ fi
 
 # Download and verify
 binary_path="$DOWNLOAD_DIR/claude-$version-$platform"
-if ! download_file "$GCS_BUCKET/$version/$platform/claude" "$binary_path"; then
-    echo "Download failed" >&2
-    rm -f "$binary_path"
-    exit 1
-fi
 
-# Pick the right checksum tool
-if [ "$os" = "darwin" ]; then
-    actual=$(shasum -a 256 "$binary_path" | cut -d' ' -f1)
+# Check if already downloaded and verify checksum
+if [ -f "$binary_path" ]; then
+    echo "Found existing binary, verifying checksum..."
+    if [ "$os" = "darwin" ]; then
+        actual=$(shasum -a 256 "$binary_path" | cut -d' ' -f1)
+    else
+        actual=$(sha256sum "$binary_path" | cut -d' ' -f1)
+    fi
+
+    if [ "$actual" = "$checksum" ]; then
+        echo "✓ Checksum verified, skipping download"
+    else
+        echo "✗ Checksum mismatch, re-downloading..."
+        rm -f "$binary_path"
+        if ! download_file "$GCS_BUCKET/$version/$platform/claude" "$binary_path"; then
+            echo "Download failed" >&2
+            exit 1
+        fi
+    fi
 else
-    actual=$(sha256sum "$binary_path" | cut -d' ' -f1)
-fi
+    echo "Downloading Claude Code binary..."
+    if ! download_file "$GCS_BUCKET/$version/$platform/claude" "$binary_path"; then
+        echo "Download failed" >&2
+        rm -f "$binary_path"
+        exit 1
+    fi
 
-if [ "$actual" != "$checksum" ]; then
-    echo "Checksum verification failed" >&2
-    rm -f "$binary_path"
-    exit 1
+    # Verify checksum after download
+    if [ "$os" = "darwin" ]; then
+        actual=$(shasum -a 256 "$binary_path" | cut -d' ' -f1)
+    else
+        actual=$(sha256sum "$binary_path" | cut -d' ' -f1)
+    fi
+
+    if [ "$actual" != "$checksum" ]; then
+        echo "Checksum verification failed" >&2
+        rm -f "$binary_path"
+        exit 1
+    fi
 fi
 
 chmod +x "$binary_path"
@@ -142,9 +165,7 @@ chmod +x "$binary_path"
 echo "Setting up Claude Code..."
 "$binary_path" install "${TARGET:-$version}"
 
-# Clean up downloaded file
-rm -f "$binary_path"
-
 echo ""
 echo "✅ Installation complete!"
+echo "Binary cached at: $binary_path"
 echo ""

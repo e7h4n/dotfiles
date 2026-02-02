@@ -3,10 +3,27 @@
 set -e
 
 dotfiles_dir="$HOME"/dotfiles
+cache_dir="$HOME/.cache/dotfiles"
 
+clone_or_pull() {
+    local repo_url="$1"
+    local cache_path="$2"
+    local dest_path="$3"
+
+    if [ -d "$cache_path" ]; then
+        git -C "$cache_path" pull
+    else
+        git clone --depth 1 "$repo_url" "$cache_path"
+    fi
+    rm -rf "$dest_path"
+    cp -r "$cache_path" "$dest_path"
+}
+
+mkdir -p "$cache_dir"
 mkdir -p "$HOME/.zsh"
-git clone --depth 1 https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
-git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.zsh/zsh-syntax-highlighting"
+
+clone_or_pull "https://github.com/sindresorhus/pure.git" "$cache_dir/pure" "$HOME/.zsh/pure"
+clone_or_pull "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$cache_dir/zsh-syntax-highlighting" "$HOME/.zsh/zsh-syntax-highlighting"
 
 cat > $HOME/.zshrc << EOF
 fpath+=($HOME/.zsh/pure)

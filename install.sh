@@ -13,4 +13,7 @@ ln -sf $dotfiles_dir/.gitattributes $HOME/.gitattributes
 ln -sf $dotfiles_dir/.agignore $HOME/.agignore
 
 
-bash $dotfiles_dir/install_claude.sh
+curl -fsSL https://claude.ai/install.sh | \
+  sed -e 's|DOWNLOAD_DIR="\$HOME/.claude/downloads"|DOWNLOAD_DIR="$HOME/.cache/claude"|' \
+      -e 's|"\$binary_path" install.*|"\$binary_path" install \$version|' | \
+  bash

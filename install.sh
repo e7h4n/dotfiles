@@ -14,7 +14,9 @@ ln -sf $dotfiles_dir/.agignore $HOME/.agignore
 
 
 curl -fsSL https://claude.ai/install.sh | \
-  sed -e '/# Clean up downloaded file/d' \
+  sed -e 's|DOWNLOAD_DIR="\$HOME/.claude/downloads"|DOWNLOAD_DIR="$HOME/.cache/claude"|' \
+      -e 's|"\$binary_path" install.*|"\$binary_path" install \$version|' \
+      -e '/# Clean up downloaded file/d' \
       -e '/rm -f "\$binary_path"/d' \
       -e '/version=\$(download_file.*latest")/a echo claude code version: $version' \
       -e 's|if ! download_file|if [ -f "\$binary_path" ]; then echo "Using cached binary"; elif ! download_file|' | \

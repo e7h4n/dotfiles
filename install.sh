@@ -18,6 +18,7 @@ source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 export PATH="\$HOME/.local/bin:\$PATH"
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
+export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
 
 alias ..='cd ..'
 alias ccc='claude --dangerously-skip-permissions'

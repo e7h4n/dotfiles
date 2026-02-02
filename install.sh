@@ -17,7 +17,7 @@ git_prompt() {
   if [[ -n "\$branch" ]]; then
     local dirty=""
     [[ -n \$(git status --porcelain 2>/dev/null) ]] && dirty="*"
-    echo " (%F{green}\$branch%f%F{red}\$dirty%f)"
+    echo " %F{green}\$branch%f%F{red}\$dirty%f"
   fi
 }
 

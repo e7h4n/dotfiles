@@ -4,25 +4,20 @@ set -e
 
 dotfiles_dir="$HOME"/dotfiles
 
-export XDG_CONFIG_HOME="$HOME/.config/"
+mkdir -p "$HOME/.zsh"
+git clone --depth 1 https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
+git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git "$HOME/.zsh/zsh-syntax-highlighting"
 
 cat > $HOME/.zshrc << EOF
+fpath+=($HOME/.zsh/pure)
+autoload -U promptinit; promptinit
+prompt pure
+
+source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
 export PATH="\$HOME/.local/bin:\$PATH"
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
-
-# Git prompt
-git_prompt() {
-  local branch=\$(git symbolic-ref --short HEAD 2>/dev/null)
-  if [[ -n "\$branch" ]]; then
-    local dirty=""
-    [[ -n \$(git status --porcelain 2>/dev/null) ]] && dirty="*"
-    echo " %F{green}\$branch%f%F{red}\$dirty%f"
-  fi
-}
-
-setopt PROMPT_SUBST
-PROMPT='%F{blue}%1~%f\$(git_prompt) %# '
 
 alias ccc='claude --dangerously-skip-permissions'
 alias cccc='ccc --continue'

@@ -40,6 +40,7 @@ export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
 alias ..='cd ..'
 alias ccc='claude --dangerously-skip-permissions'
 alias cccc='ccc --continue'
+alias ccw='CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=1 ccc /begin-coding-worker'
 alias gws='git status'
 alias glgga='git log --all --decorate --graph'
 alias vr='(git cm && git prune-all); (cd turbo && pnpm install && pnpm -F web db:migrate && pnpm test) && ccc'

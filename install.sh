@@ -21,6 +21,7 @@ clone_or_pull() {
 
 mkdir -p "$cache_dir"
 mkdir -p "$HOME/.zsh"
+mkdir -p "$HOME/.local/bin" "$HOME/.local/lib" "$HOME/.npm" "$HOME/.codex"
 
 clone_or_pull "https://github.com/sindresorhus/pure.git" "$cache_dir/pure" "$HOME/.zsh/pure"
 clone_or_pull "https://github.com/zsh-users/zsh-syntax-highlighting.git" "$cache_dir/zsh-syntax-highlighting" "$HOME/.zsh/zsh-syntax-highlighting"
@@ -33,6 +34,7 @@ prompt pure
 source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 export PATH="\$HOME/.local/bin:\$PATH"
+export NPM_CONFIG_PREFIX="\$HOME/.local"
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
@@ -110,3 +112,5 @@ curl -fsSL https://claude.ai/install.sh | \
       -e '/version=\$(download_file.*latest")/a echo claude code version: $version' \
       -e 's|if ! download_file|if [ -f "\$binary_path" ]; then echo "Using cached binary"; elif ! download_file|' | \
   bash
+
+NPM_CONFIG_PREFIX="$HOME/.local" npm install -g @openai/codex

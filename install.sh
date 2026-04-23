@@ -39,6 +39,41 @@ export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export CLAUDE_CODE_DISABLE_TERMINAL_TITLE=1
 
+codex_claude_compat_init() {
+    local repo_root="\$PWD"
+
+    rm -rf "\$repo_root/.codex"
+    mkdir -pv "\$repo_root/.codex"
+    mkdir -pv "\$HOME/.agents/skills"
+
+    if [ -d "\$HOME/.config/claude/skills" ]; then
+        find "\$HOME/.config/claude/skills" -mindepth 1 -maxdepth 1 -type d -exec cp -a {} "\$HOME/.agents/skills/" \;
+    fi
+
+    if [ -d "\$repo_root/.claude/skills" ]; then
+        rm -rf "\$repo_root/.agents/skills"
+        mkdir -pv "\$repo_root/.agents/skills"
+        cp -a "\$repo_root/.claude/skills/." "\$repo_root/.agents/skills/"
+        cp -a "\$repo_root/.claude/skills" "\$repo_root/.codex/"
+    fi
+
+    if [ -d "\$repo_root/.claude/commands" ]; then
+        cp -a "\$repo_root/.claude/commands" "\$repo_root/.codex/"
+    fi
+}
+
+cdr() {
+    codex --sandbox danger-full-access -a never "\$@"
+}
+
+cdc() {
+    codex_claude_compat_init && cdr "\$@"
+}
+
+cdcc() {
+    codex_claude_compat_init && codex resume --last --sandbox danger-full-access -a never "\$@"
+}
+
 alias ..='cd ..'
 alias ccc='claude --dangerously-skip-permissions'
 alias cccc='ccc --continue'

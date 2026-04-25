@@ -60,6 +60,10 @@ codex_claude_compat_init() {
     if [ -d "\$repo_root/.claude/commands" ]; then
         cp -a "\$repo_root/.claude/commands" "\$repo_root/.codex/"
     fi
+
+    if [ -f "\$repo_root/CLAUDE.md" ]; then
+        cp -a "\$repo_root/CLAUDE.md" "\$repo_root/AGENTS.md"
+    fi
 }
 
 cdr() {
